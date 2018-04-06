@@ -58,6 +58,7 @@ func (m *Maze) NodeFinder() {
 					Col: int64(j),
 				}
 				if m.NorthNeighbor(node) {
+					m.WestNeighbor(node)
 					m.PlotNodePoint(node)
 				}
 				continue
@@ -72,10 +73,11 @@ func (m *Maze) NodeFinder() {
 				}
 				// check if we already know this point before moving one
 				if m.NodeExists(node) {
-					fmt.Println("Node already exists, do nothing")
+					fmt.Println("Node already exists, do nothing", node)
 					continue
 				}
 				m.NorthNeighbor(node)
+				m.WestNeighbor(node)
 				m.PlotNodePoint(node)
 
 				fmt.Println("Placing additional Node at Row", i, "Column", j-1)
@@ -102,11 +104,36 @@ func (m *Maze) NorthNeighbor(node Node) bool {
 		neighborNode := m.NodePointsCol[node.Col][len(m.NodePointsCol[node.Col])-1]
 		fmt.Println("Found northern neighbor:", node.Col, neighborNode)
 		// make neighbor connection
-		if m.Neighbors == nil {
-			m.Neighbors = make(map[Node]map[Node]bool)
-		}
+
 		// m.Neighbors[node] = append(m.Neighbors[node], neighborNode)
-		m.Neighbors[node] = map[Node]bool{neighborNode: true}
+		// m.Neighbors[node] = map[Node]bool{neighborNode: true}
+		m.ConnectNeighbors(node, neighborNode)
+		return true
+	}
+
+	return false
+}
+
+func (m *Maze) WestNeighbor(node Node) bool {
+	// row = node.Row
+	// col = node.Col
+	// stay in same row, decrement column, check for wall char
+	// first bail early if we hit a wall
+	if m.Graph[node.Row][node.Col-1] == wallChar {
+		//TODO:
+		fmt.Println("wall west of me, done checking west")
+		return false
+	}
+
+	// scan up the row to see if we have a neighbor
+	if m.NodePointsRow[node.Row] != nil {
+		neighborNode := m.NodePointsRow[node.Row][len(m.NodePointsRow[node.Row])-1]
+		fmt.Println("Found Western neighbor:", node.Row, neighborNode)
+		// make neighbor connection
+
+		// m.Neighbors[node] = append(m.Neighbors[node], neighborNode)
+		// m.Neighbors[node] = map[Node]bool{neighborNode: true}
+		m.ConnectNeighbors(node, neighborNode)
 		return true
 	}
 
@@ -146,4 +173,17 @@ func (m *Maze) NodeExists(node Node) bool {
 		}
 	}
 	return false
+}
+
+func (m *Maze) ConnectNeighbors(node1, node2 Node) {
+	log.Println("node1:", node1, "node2:", node2)
+	log.Println("Making neighbor connection")
+	if m.Neighbors == nil {
+		m.Neighbors = make(map[Node][]Node)
+	}
+	m.Neighbors[node1] = append(m.Neighbors[node1], node2)
+	// and reverse connection
+	m.Neighbors[node2] = append(m.Neighbors[node2], node1)
+
+	fmt.Printf("%+v \n", m.Neighbors)
 }

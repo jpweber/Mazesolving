@@ -40,7 +40,15 @@ func main() {
 	}
 
 	// print neighbors
-	fmt.Printf("%+v", mainMaze.Neighbors)
+	for k, v := range mainMaze.Neighbors {
+		fmt.Println("Node:", k)
+		for _, x := range v {
+			fmt.Println("Row:", x.Row, "Col:", x.Col)
+
+		}
+		fmt.Println("")
+	}
+
 	// print maze
 	for _, x := range mainMaze.Graph {
 		for _, y := range x {

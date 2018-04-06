@@ -15,7 +15,7 @@ type Maze struct {
 	NodePointsCol map[int64][]Node
 	// [row][col,col,col]
 	NodePointsRow map[int64][]Node
-	Neighbors     map[Node]map[Node]bool
+	Neighbors     map[Node][]Node
 }
 
 type Node struct {
