@@ -12,10 +12,10 @@ type Maze struct {
 	Start map[int64]int64
 	Goal  map[int64]int64
 	// [column][row,row,row]
-	NodePointsCol map[int64][]int64
+	NodePointsCol map[int64][]Node
 	// [row][col,col,col]
-	NodePointsRow map[int64][]int64
-	Neighbors     map[Node][]Node
+	NodePointsRow map[int64][]Node
+	Neighbors     map[Node]map[Node]bool
 }
 
 type Node struct {

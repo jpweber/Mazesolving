@@ -38,6 +38,9 @@ func main() {
 	for k, v := range mainMaze.NodePointsRow {
 		fmt.Println("Row:", k, "Columns with points", v)
 	}
+
+	// print neighbors
+	fmt.Printf("%+v", mainMaze.Neighbors)
 	// print maze
 	for _, x := range mainMaze.Graph {
 		for _, y := range x {
