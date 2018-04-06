@@ -86,20 +86,28 @@ func (m *Maze) NorthNeighbor(node Node) bool {
 	}
 
 	// scan up the row to see if we have a neighbor
-	if m.NodePoints[node.Col] != nil {
-		fmt.Println("Found northern neighbor:", node.Col, m.NodePoints[node.Col][len(m.NodePoints[node.Col])-1])
+	if m.NodePointsCol[node.Col] != nil {
+		fmt.Println("Found northern neighbor:", node.Col, m.NodePointsCol[node.Col][len(m.NodePointsCol[node.Col])-1])
 		return true
 	}
 
 	return false
 }
+
 func (m *Maze) PlotNodePoint(node Node) {
 	fmt.Println("Plotting node point")
 	m.Nodes = append(m.Nodes, node)
-	if m.NodePoints == nil {
-		m.NodePoints = make(map[int64][]int64)
+	// plot node in column map
+	if m.NodePointsCol == nil {
+		m.NodePointsCol = make(map[int64][]int64)
 	}
-	m.NodePoints[int64(node.Col)] = append(m.NodePoints[int64(node.Col)], node.Row)
+	m.NodePointsCol[int64(node.Col)] = append(m.NodePointsCol[int64(node.Col)], node.Row)
+
+	// plot node in row map
+	if m.NodePointsRow == nil {
+		m.NodePointsRow = make(map[int64][]int64)
+	}
+	m.NodePointsRow[int64(node.Row)] = append(m.NodePointsRow[int64(node.Row)], node.Col)
 }
 
 func (m *Maze) DrawNodes() {

@@ -31,9 +31,12 @@ func main() {
 		fmt.Println(n.Row, n.Col)
 	}
 
-	// print node points list
-	for k, v := range mainMaze.NodePoints {
+	// print node points col list
+	for k, v := range mainMaze.NodePointsCol {
 		fmt.Println("Column:", k, "Rows with points", v)
+	}
+	for k, v := range mainMaze.NodePointsRow {
+		fmt.Println("Row:", k, "Columns with points", v)
 	}
 	// print maze
 	for _, x := range mainMaze.Graph {

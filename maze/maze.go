@@ -7,20 +7,20 @@ import (
 )
 
 type Maze struct {
-	Graph      [][]string
-	Nodes      []Node
-	GoalPath   map[int64]int64
-	Start      map[int64]int64
-	Goal       map[int64]int64
-	NodePoints map[int64][]int64
+	Graph [][]string
+	Nodes []Node
+	Start map[int64]int64
+	Goal  map[int64]int64
+	// [column][row,row,row]
+	NodePointsCol map[int64][]int64
+	// [row][col,col,col]
+	NodePointsRow map[int64][]int64
+	Neighbors     map[Node][]Node
 }
 
 type Node struct {
 	Row int64
 	Col int64
-}
-
-type NodeLinks struct {
 }
 
 func textDecoder(reader *bufio.Reader) Maze {
