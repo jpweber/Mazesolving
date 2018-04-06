@@ -25,10 +25,15 @@ func main() {
 	// Plot our nodes (decision points)
 	mainMaze.NodeFinder()
 
-	mainMaze.PlotNodes()
+	mainMaze.DrawNodes()
 	// print nodes
 	for _, n := range mainMaze.Nodes {
-		fmt.Println(n.Row, n.Col, n.Neighbors)
+		fmt.Println(n.Row, n.Col)
+	}
+
+	// print node points list
+	for k, v := range mainMaze.NodePoints {
+		fmt.Println("Column:", k, "Rows with points", v)
 	}
 	// print maze
 	for _, x := range mainMaze.Graph {
