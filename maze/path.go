@@ -184,6 +184,4 @@ func (m *Maze) ConnectNeighbors(node1, node2 Node) {
 	m.Neighbors[node1] = append(m.Neighbors[node1], node2)
 	// and reverse connection
 	m.Neighbors[node2] = append(m.Neighbors[node2], node1)
-
-	fmt.Printf("%+v \n", m.Neighbors)
 }

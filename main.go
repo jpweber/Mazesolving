@@ -27,27 +27,27 @@ func main() {
 
 	mainMaze.DrawNodes()
 	// print nodes
-	for _, n := range mainMaze.Nodes {
-		fmt.Println(n.Row, n.Col)
-	}
+	// for _, n := range mainMaze.Nodes {
+	// 	fmt.Println(n.Row, n.Col)
+	// }
 
-	// print node points col list
-	for k, v := range mainMaze.NodePointsCol {
-		fmt.Println("Column:", k, "Rows with points", v)
-	}
-	for k, v := range mainMaze.NodePointsRow {
-		fmt.Println("Row:", k, "Columns with points", v)
-	}
+	// // print node points col list
+	// for k, v := range mainMaze.NodePointsCol {
+	// 	fmt.Println("Column:", k, "Rows with points", v)
+	// }
+	// for k, v := range mainMaze.NodePointsRow {
+	// 	fmt.Println("Row:", k, "Columns with points", v)
+	// }
 
-	// print neighbors
-	for k, v := range mainMaze.Neighbors {
-		fmt.Println("Node:", k)
-		for _, x := range v {
-			fmt.Println("Row:", x.Row, "Col:", x.Col)
+	// // print neighbors
+	// for k, v := range mainMaze.Neighbors {
+	// 	fmt.Println("Node:", k)
+	// 	for _, x := range v {
+	// 		fmt.Println("Row:", x.Row, "Col:", x.Col)
 
-		}
-		fmt.Println("")
-	}
+	// 	}
+	// 	fmt.Println("")
+	// }
 
 	// print maze
 	for _, x := range mainMaze.Graph {
