@@ -26,6 +26,9 @@ func main() {
 	mainMaze.NodeFinder()
 
 	mainMaze.DrawNodes()
+	mainMaze.Output()
+
+	// DEBUG: output
 	// print nodes
 	// for _, n := range mainMaze.Nodes {
 	// 	fmt.Println(n.Row, n.Col)
@@ -52,8 +55,9 @@ func main() {
 	// print maze
 	for _, x := range mainMaze.Graph {
 		for _, y := range x {
-			fmt.Printf("%s", y)
+			fmt.Printf("%v", y)
 		}
 		// fmt.Printf("\n")
 	}
+	// END DEBUG
 }

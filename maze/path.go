@@ -5,9 +5,6 @@ import (
 	"log"
 )
 
-const wallChar = "#"
-const pathChar = " "
-
 func (m *Maze) NodeFinder() {
 
 	// i (row)
@@ -23,19 +20,19 @@ func (m *Maze) NodeFinder() {
 			fmt.Println("Scanning for row placement in Column:", j)
 
 			// if we hit a wall square at the first step just keep going
-			if col == wallChar && j == 0 {
+			if col == kBlack && j == 0 {
 				continue
 			}
 
 			// if we hit a wall square and the previous square is also
 			// a sqaure, advance, don't place a node
-			if col == wallChar && row[j-1] == wallChar {
+			if col == kBlack && row[j-1] == kBlack {
 				continue
 			}
 
 			// place first node point found on row
 			// ever path space after this doesn't need a node until we hit a decision point
-			if col == pathChar && nodePlaced == false {
+			if col == kWhite && nodePlaced == false {
 				node := Node{
 					Row: int64(i),
 					Col: int64(j),
@@ -51,7 +48,7 @@ func (m *Maze) NodeFinder() {
 			}
 
 			// just walking along the path checking up for neighbors
-			if col == pathChar {
+			if col == kWhite {
 				log.Println(col, i, j)
 				node := Node{
 					Row: int64(i),
@@ -65,7 +62,7 @@ func (m *Maze) NodeFinder() {
 			}
 
 			// hit wall and set node one space back
-			if col == wallChar {
+			if col == kBlack {
 				fmt.Println("hit wall")
 				node := Node{
 					Row: int64(i),
@@ -93,7 +90,7 @@ func (m *Maze) NorthNeighbor(node Node) bool {
 	// col = node.Col
 	// stay in same row, decrement column, check for wall char
 	// first bail early if we hit a wall
-	if m.Graph[node.Row-1][node.Col] == wallChar {
+	if m.Graph[node.Row-1][node.Col] == kBlack {
 		//TODO:
 		fmt.Println("wall north of me, don't checking north")
 		return false
@@ -119,7 +116,7 @@ func (m *Maze) WestNeighbor(node Node) bool {
 	// col = node.Col
 	// stay in same row, decrement column, check for wall char
 	// first bail early if we hit a wall
-	if m.Graph[node.Row][node.Col-1] == wallChar {
+	if m.Graph[node.Row][node.Col-1] == kBlack {
 		//TODO:
 		fmt.Println("wall west of me, done checking west")
 		return false
@@ -162,7 +159,7 @@ func (m *Maze) PlotNodePoint(node Node) {
 
 func (m *Maze) DrawNodes() {
 	for _, n := range m.Nodes {
-		m.Graph[n.Row][n.Col] = "*"
+		m.Graph[n.Row][n.Col] = kPathColor
 	}
 }
 
