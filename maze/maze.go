@@ -59,6 +59,7 @@ type Maze struct {
 	// [row][col,col,col]
 	NodePointsRow map[int64][]Node
 	Neighbors     map[Node][]Node
+	Bounds        image.Rectangle
 }
 
 type Node struct {
@@ -86,6 +87,8 @@ func imageDecoder(file io.Reader) Maze {
 		pixels = append(pixels, row)
 	}
 	maze.Graph = pixels
+	maze.Bounds = bounds
+
 	return maze
 }
 

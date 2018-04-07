@@ -8,7 +8,7 @@ import (
 
 func (m *Maze) Output() {
 
-	solvedMaze := image.NewRGBA(image.Rect(0, 0, 5, 5))
+	solvedMaze := image.NewRGBA(m.Bounds)
 	for i, row := range m.Graph {
 		for j, col := range row {
 			solvedMaze.Set(j, i, pixelToRGBA(col))
