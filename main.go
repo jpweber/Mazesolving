@@ -52,12 +52,5 @@ func main() {
 	// 	fmt.Println("")
 	// }
 
-	// print maze
-	for _, x := range mainMaze.Graph {
-		for _, y := range x {
-			fmt.Printf("%v", y)
-		}
-		// fmt.Printf("\n")
-	}
 	// END DEBUG
 }

@@ -55,9 +55,13 @@ func (m *Maze) NodeFinder() {
 					Col: int64(j),
 				}
 				if m.NorthNeighbor(node) {
+					// m.NorthNeighbor(node)
 					m.WestNeighbor(node)
 					m.PlotNodePoint(node)
 				}
+
+				m.NorthWestCorner(node)
+
 				continue
 			}
 
@@ -68,7 +72,7 @@ func (m *Maze) NodeFinder() {
 					Row: int64(i),
 					Col: int64(j - 1),
 				}
-				// check if we already know this point before moving one
+				// check if we already know this point before moving on
 				if m.NodeExists(node) {
 					fmt.Println("Node already exists, do nothing", node)
 					continue
@@ -85,6 +89,14 @@ func (m *Maze) NodeFinder() {
 	}
 }
 
+func (m *Maze) NorthWestCorner(node Node) {
+	// This is for when we should have a node, but its not the first in a row
+	// and there is a wall to the left and the top but open to the right
+	if m.Graph[node.Row-1][node.Col] == kBlack && m.Graph[node.Row][node.Col-1] == kBlack {
+		fmt.Println("In a northwest corner")
+		m.PlotNodePoint(node)
+	}
+}
 func (m *Maze) NorthNeighbor(node Node) bool {
 	// row = node.Row
 	// col = node.Col
@@ -92,7 +104,7 @@ func (m *Maze) NorthNeighbor(node Node) bool {
 	// first bail early if we hit a wall
 	if m.Graph[node.Row-1][node.Col] == kBlack {
 		//TODO:
-		fmt.Println("wall north of me, don't checking north")
+		fmt.Println("wall north of me, done checking north")
 		return false
 	}
 
@@ -100,10 +112,16 @@ func (m *Maze) NorthNeighbor(node Node) bool {
 	if m.NodePointsCol[node.Col] != nil {
 		neighborNode := m.NodePointsCol[node.Col][len(m.NodePointsCol[node.Col])-1]
 		fmt.Println("Found northern neighbor:", node.Col, neighborNode)
-		// make neighbor connection
 
-		// m.Neighbors[node] = append(m.Neighbors[node], neighborNode)
-		// m.Neighbors[node] = map[Node]bool{neighborNode: true}
+		// we found a neighbor to the north
+		// now check if we are at the south most of a column
+		// if we are not don't plot this point
+		if m.Graph[node.Row+1][node.Col] != kBlack {
+			fmt.Println("Not at bottom of column doing nothing")
+			return false
+		}
+
+		// make neighbor connection
 		m.ConnectNeighbors(node, neighborNode)
 		return true
 	}
