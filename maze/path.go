@@ -14,11 +14,12 @@ func (m *Maze) NodeFinder() {
 	for i, row := range m.Graph {
 		// TODO:
 		fmt.Println("Scanning for node placement on row:", i)
-		nodePlaced := false
+		// columns:
 		for j, col := range row {
 			// TODO:
 			fmt.Println("Scanning for row placement in Column:", j)
 
+			// Easy exceptions
 			// if we hit a wall square at the first step just keep going
 			if col == kBlack && j == 0 {
 				continue
@@ -30,115 +31,182 @@ func (m *Maze) NodeFinder() {
 				continue
 			}
 
-			// place first node point found on row
-			// ever path space after this doesn't need a node until we hit a decision point
-			if col == kWhite && nodePlaced == false {
-				node := Node{
-					Row: int64(i),
-					Col: int64(j),
-				}
-
-				nodePlaced = true
-				m.NorthNeighbor(node)
-				m.PlotNodePoint(node)
-
-				// TODO:
-				fmt.Println("Placing init Node at Row", i, "Column", j)
+			// if we found the start move on for now
+			if col == kRed {
+				fmt.Println("Found Start")
 				continue
 			}
 
-			// just walking along the path checking up for neighbors
-			if col == kWhite {
-				log.Println(col, i, j)
-				node := Node{
-					Row: int64(i),
-					Col: int64(j),
-				}
-				if m.NorthNeighbor(node) {
-					// m.NorthNeighbor(node)
-					m.WestNeighbor(node)
-					m.PlotNodePoint(node)
-				}
-
-				m.NorthWestCorner(node)
-
+			// if we found the end move on for now
+			if col == kGreen {
+				fmt.Println("Found Goal")
 				continue
 			}
 
-			// hit wall and set node one space back
+			// Easy rules are handled above, now we need to check north south east west positions.
+			// and then place decision nodes and make connections as needed.
+
+			// description of rules needed
+			// these are corner rules basically
+			// if wall to the west wall to the north make node
+			// if wall to west and wall to south make node
+			// if wall to east and wall to north make node
+			// if wall to east and wall to south make node
+			// These are path Rules
+			// if wall to east and wall to west and path north and south
+			// skip node. If we are in this situation there should be node already north
+			// and a node will be getting placed south of this position later
+			// These are connection rules
+			// when placing a node search west for connection and make it
+			// then search north for node and connect it.
+
+			// placment logic
+			node := Node{
+				Row: int64(i),
+				Col: int64(j),
+			}
+
+			// Corners
 			if col == kBlack {
-				fmt.Println("hit wall")
-				node := Node{
-					Row: int64(i),
-					Col: int64(j - 1),
-				}
-				// check if we already know this point before moving on
-				if m.NodeExists(node) {
-					fmt.Println("Node already exists, do nothing", node)
-					continue
-				}
-				m.NorthNeighbor(node)
+				continue
+			}
+
+			// are we in NW corner
+			if m.northWestCorner(node) {
+				fmt.Println("NWC")
+				// place node
+				m.PlotNodePoint(node)
+			}
+			// are we in NE Corner
+			if m.northEastCorner(node) {
+				fmt.Println("NEC")
+				// place node and make western connection
 				m.WestNeighbor(node)
 				m.PlotNodePoint(node)
 
-				fmt.Println("Placing additional Node at Row", i, "Column", j-1)
-				continue
+			}
+			// are we in SW corner
+			if m.southWestCorner(node) {
+				fmt.Println("SWC")
+				// place node and make northern connection
+				m.NorthNeighbor(node)
+				m.PlotNodePoint(node)
+
+			}
+			// are we in SE corner
+			if m.southEastCorner(node) {
+				fmt.Println("SEC")
+				// place node and make northern and western connection
+				m.NorthNeighbor(node)
+				m.WestNeighbor(node)
+				m.PlotNodePoint(node)
+			}
+
+			// Path junction points that aren't corners
+			if m.topOfColumn(node) {
+				fmt.Println("TC")
+				m.PlotNodePoint(node)
+			}
+			if m.bottomOfColumn(node) {
+				fmt.Println("BC")
+				m.NorthNeighbor(node)
+				m.PlotNodePoint(node)
+			}
+			if m.midEastColJunction(node) {
+				fmt.Println("MEC")
+				m.PlotNodePoint(node)
+			}
+			if m.midWestColJunction(node) {
+				fmt.Println("MWC")
+				m.WestNeighbor(node)
+				m.PlotNodePoint(node)
 			}
 		}
 
 	}
 }
 
-func (m *Maze) NorthWestCorner(node Node) {
-	// This is for when we should have a node, but its not the first in a row
-	// and there is a wall to the left and the top but open to the right
+func (m *Maze) northWestCorner(node Node) bool {
 	if m.Graph[node.Row-1][node.Col] == kBlack && m.Graph[node.Row][node.Col-1] == kBlack {
-		fmt.Println("In a northwest corner")
-		m.PlotNodePoint(node)
+		// fmt.Println("In a northwest corner")
+		return true
 	}
+	return false
 }
-func (m *Maze) NorthNeighbor(node Node) bool {
-	// row = node.Row
-	// col = node.Col
-	// stay in same row, decrement column, check for wall char
-	// first bail early if we hit a wall
-	if m.Graph[node.Row-1][node.Col] == kBlack {
-		//TODO:
-		fmt.Println("wall north of me, done checking north")
+func (m *Maze) southWestCorner(node Node) bool {
+	if m.Graph[node.Row+1][node.Col] == kBlack && m.Graph[node.Row][node.Col-1] == kBlack {
+		// fmt.Println("In a southwest corner")
+		return true
+	}
+	return false
+}
+
+func (m *Maze) northEastCorner(node Node) bool {
+	// first check if we are at the end of the columns and exit early
+	if node.Col == int64(len(m.Graph[node.Row])-1) {
 		return false
 	}
+	if m.Graph[node.Row-1][node.Col] == kBlack && m.Graph[node.Row][node.Col+1] == kBlack {
+		// fmt.Println("In a norteast corner")
+		return true
+	}
+	return false
+}
+func (m *Maze) southEastCorner(node Node) bool {
+	// first check if we are at the end of the columns and exit early
+	if node.Col == int64(len(m.Graph[node.Row])-1) {
+		return false
+	}
+
+	if m.Graph[node.Row+1][node.Col] == kBlack && m.Graph[node.Row][node.Col+1] == kBlack {
+		// fmt.Println("In a northwest corner")
+		return true
+	}
+	return false
+}
+func (m *Maze) topOfColumn(node Node) bool {
+	if m.Graph[node.Row-1][node.Col] == kBlack && m.Graph[node.Row+1][node.Col] == kWhite {
+		// fmt.Println("Found top of column")
+		return true
+	}
+	return false
+}
+func (m *Maze) bottomOfColumn(node Node) bool {
+	if m.Graph[node.Row-1][node.Col] == kWhite && m.Graph[node.Row+1][node.Col] == kBlack {
+		// fmt.Println("Found bottom of column")
+		return true
+	}
+	return false
+}
+func (m *Maze) midEastColJunction(node Node) bool {
+	if m.Graph[node.Row][node.Col+1] == kWhite && m.Graph[node.Row][node.Col-1] == kBlack {
+		fmt.Println("Found east column junction")
+		return true
+	}
+	return false
+}
+func (m *Maze) midWestColJunction(node Node) bool {
+	if m.Graph[node.Row][node.Col-1] == kWhite && m.Graph[node.Row][node.Col+1] == kBlack {
+		fmt.Println("Found west column junction")
+		return true
+	}
+	return false
+}
+
+func (m *Maze) NorthNeighbor(node Node) {
 
 	// scan up the row to see if we have a neighbor
 	if m.NodePointsCol[node.Col] != nil {
 		neighborNode := m.NodePointsCol[node.Col][len(m.NodePointsCol[node.Col])-1]
 		fmt.Println("Found northern neighbor:", node.Col, neighborNode)
 
-		// we found a neighbor to the north
-		// now check if we are at the south most of a column
-		// if we are not don't plot this point
-		if m.Graph[node.Row+1][node.Col] != kBlack {
-			fmt.Println("Not at bottom of column doing nothing")
-			return false
-		}
-
 		// make neighbor connection
 		m.ConnectNeighbors(node, neighborNode)
-		return true
 	}
 
-	return false
 }
 
-func (m *Maze) WestNeighbor(node Node) bool {
-	// row = node.Row
-	// col = node.Col
-	// stay in same row, decrement column, check for wall char
-	// first bail early if we hit a wall
-	if m.Graph[node.Row][node.Col-1] == kBlack {
-		//TODO:
-		fmt.Println("wall west of me, done checking west")
-		return false
-	}
+func (m *Maze) WestNeighbor(node Node) {
 
 	// scan up the row to see if we have a neighbor
 	if m.NodePointsRow[node.Row] != nil {
@@ -146,13 +214,9 @@ func (m *Maze) WestNeighbor(node Node) bool {
 		fmt.Println("Found Western neighbor:", node.Row, neighborNode)
 		// make neighbor connection
 
-		// m.Neighbors[node] = append(m.Neighbors[node], neighborNode)
-		// m.Neighbors[node] = map[Node]bool{neighborNode: true}
 		m.ConnectNeighbors(node, neighborNode)
-		return true
 	}
 
-	return false
 }
 
 func (m *Maze) PlotNodePoint(node Node) {
@@ -191,6 +255,10 @@ func (m *Maze) NodeExists(node Node) bool {
 }
 
 func (m *Maze) ConnectNeighbors(node1, node2 Node) {
+	if node1 == node2 {
+		fmt.Println("found ourselves as neighbor not connecting")
+		return
+	}
 	log.Println("node1:", node1, "node2:", node2)
 	log.Println("Making neighbor connection")
 	if m.Neighbors == nil {

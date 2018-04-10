@@ -43,14 +43,14 @@ func main() {
 	// }
 
 	// // print neighbors
-	// for k, v := range mainMaze.Neighbors {
-	// 	fmt.Println("Node:", k)
-	// 	for _, x := range v {
-	// 		fmt.Println("Row:", x.Row, "Col:", x.Col)
+	for k, v := range mainMaze.Neighbors {
+		fmt.Println("Node:", k)
+		for _, x := range v {
+			fmt.Println("Row:", x.Row, "Col:", x.Col)
 
-	// 	}
-	// 	fmt.Println("")
-	// }
+		}
+		fmt.Println("")
+	}
 
 	// END DEBUG
 }
