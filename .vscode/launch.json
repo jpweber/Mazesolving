@@ -12,10 +12,11 @@
             "remotePath": "",
             "port": 2345,
             "host": "127.0.0.1",
-            "program": "${fileDirname}",
+            "program": "${workspaceFolder}",
             "env": {},
             "args": ["-f", "10x10.png"],
-            "showLog": true
+            "showLog": true,
+            "trace": "verbose"
         }
     ]
 }

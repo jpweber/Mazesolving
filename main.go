@@ -4,8 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/jpweber/mazes/maze"
+	"github.com/jpweber/mazes/solver"
 )
 
 func main() {
@@ -23,34 +25,20 @@ func main() {
 	mainMaze := maze.Read(*mazeFile)
 
 	// Plot our nodes (decision points)
+	start := time.Now()
 	mainMaze.NodeFinder()
+	duration := time.Since(start)
+	fmt.Println("Time to plot nodes on maze", duration)
 
-	mainMaze.DrawNodes()
+	start = time.Now()
+	mainMaze.Path = solver.DumbAlg(mainMaze)
+	duration = time.Since(start)
+	fmt.Println("Time to solve on maze", duration)
+	// fmt.Println(mainMaze.Path)
+	// mainMaze.DrawNodes()
+	mainMaze.DrawPath()
 	mainMaze.Output()
 
-	// DEBUG: output
-	// print nodes
-	// for _, n := range mainMaze.Nodes {
-	// 	fmt.Println(n.Row, n.Col)
-	// }
+	// fmt.Println(mainMaze.Graph)
 
-	// // print node points col list
-	// for k, v := range mainMaze.NodePointsCol {
-	// 	fmt.Println("Column:", k, "Rows with points", v)
-	// }
-	// for k, v := range mainMaze.NodePointsRow {
-	// 	fmt.Println("Row:", k, "Columns with points", v)
-	// }
-
-	// // print neighbors
-	for k, v := range mainMaze.Neighbors {
-		fmt.Println("Node:", k)
-		for _, x := range v {
-			fmt.Println("Row:", x.Row, "Col:", x.Col)
-
-		}
-		fmt.Println("")
-	}
-
-	// END DEBUG
 }

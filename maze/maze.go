@@ -34,10 +34,16 @@ var (
 		B: 0,
 		A: 255,
 	}
-	kPathColor = Pixel{
+	kNodeColor = Pixel{
 		R: 92,
 		G: 221,
 		B: 240,
+		A: 255,
+	}
+	kPathColor = Pixel{
+		R: 0,
+		G: 0,
+		B: 255,
 		A: 255,
 	}
 )
@@ -52,14 +58,15 @@ type Pixel struct {
 type Maze struct {
 	Graph [][]Pixel
 	Nodes []Node
-	Start map[int64]int64
-	Goal  map[int64]int64
+	Start Node
+	Goal  Node
 	// [column][row,row,row]
 	NodePointsCol map[int64][]Node
 	// [row][col,col,col]
 	NodePointsRow map[int64][]Node
 	Neighbors     map[Node][]Node
 	Bounds        image.Rectangle
+	Path          []Node
 }
 
 type Node struct {
@@ -120,32 +127,53 @@ func Read(fileName string) Maze {
 
 }
 
-func (m *Maze) findStart() {
-	// init start map
-	m.Start = make(map[int64]int64)
-loop:
-	for i, row := range m.Graph {
-		for j, col := range row {
-			if col == kRed {
-				log.Println("Found Start:", i, ",", j)
-				m.Start[int64(i)] = int64(j)
-				break loop
+func (m *Maze) DrawPath() {
+
+	for i, n := range m.Path {
+		m.Graph[n.Row][n.Col] = kPathColor
+		if len(m.Path) != i+1 {
+			m.connectPoints(m.Path[i], m.Path[i+1])
+		}
+	}
+
+}
+
+func (m *Maze) connectPoints(nodeA, nodeB Node) {
+
+	var colDiff int64
+	var rowDiff int64
+	if nodeA.Row == nodeB.Row {
+		colDiff = int64(nodeA.Col-nodeB.Col) * -1
+	} else {
+		rowDiff = int64(nodeA.Row-nodeB.Row) * -1
+	}
+	if colDiff == 0 {
+		// fmt.Println("Row steps =", rowDiff)
+		if rowDiff < 0 {
+			for i := rowDiff; i < 0; i++ {
+				m.Graph[nodeA.Row+i][nodeA.Col] = kPathColor
+			}
+		} else {
+			for i := rowDiff; i > 0; i-- {
+				m.Graph[nodeA.Row+1][nodeA.Col] = kPathColor
+			}
+		}
+	} else {
+		// fmt.Println("Col steps =", colDiff)
+		if colDiff < 0 {
+			for i := colDiff; i < 0; i++ {
+				m.Graph[nodeA.Row][nodeA.Col+i] = kPathColor
+			}
+		} else {
+			for i := colDiff; i > 0; i-- {
+				m.Graph[nodeA.Row][nodeA.Col+1] = kPathColor
 			}
 		}
 	}
-}
 
-func (m *Maze) findGoal() {
-	// init start map
-	m.Goal = make(map[int64]int64)
-loop:
-	for i, row := range m.Graph {
-		for j, col := range row {
-			if col == kGreen {
-				log.Println("Found Goal:", i, ",", j)
-				m.Goal[int64(i)] = int64(j)
-				break loop
-			}
-		}
+}
+func (m *Maze) DrawNodes() {
+	for _, n := range m.Nodes {
+		m.Graph[n.Row][n.Col] = kNodeColor
 	}
 }
