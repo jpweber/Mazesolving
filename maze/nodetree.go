@@ -141,11 +141,8 @@ func (m *Maze) NodeFinder() {
 
 func (m *Maze) startNeighbor(node Node) bool {
 	// fmt.Println("Start neighbor check:", m.Graph[node.Row][node.Col-1])
-	if m.Graph[node.Row][node.Col-1] == kRed {
-		// fmt.Println("found start neighbor")
-		return true
-	}
-	return false
+	return m.Graph[node.Row][node.Col-1] == kRed
+
 }
 
 func (m *Maze) northWestCorner(node Node) bool {

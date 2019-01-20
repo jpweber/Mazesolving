@@ -3,6 +3,7 @@ package maze
 import (
 	"image"
 	"image/png"
+	"log"
 	"os"
 )
 
@@ -19,7 +20,7 @@ func (m *Maze) Output() {
 	// outputFile is a File type which satisfies Writer interface
 	outputFile, err := os.Create("test.png")
 	if err != nil {
-		// Handle error
+		log.Printf("error creating png file: %s", err)
 	}
 
 	// Encode takes a writer interface and an image interface
